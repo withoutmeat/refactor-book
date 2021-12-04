@@ -38,12 +38,11 @@ function playFor(performance: Performance) {
 
 /**
  * 计算一场演出的费用
- * @param play 剧目
  * @param performance 包含剧目id和观众数量
  */
-function amountFor(play: Play, performance: Performance) {
+function amountFor(performance: Performance) {
   let result: number = 0
-  switch (play.type) {
+  switch (playFor(performance).type) {
     case "tragedy":
       result = 40000;
       if (performance.audience > 30) {
@@ -58,7 +57,7 @@ function amountFor(play: Play, performance: Performance) {
       result += 300 * performance.audience;
       break;
     default:
-      throw new Error(`unknown type: ${play.type}`);
+      throw new Error(`unknown type: ${playFor(performance).type}`);
   }
   return result;
 }
@@ -73,7 +72,7 @@ function statement(invoice: Invoice, plays: Plays) {
       minimumFractionDigits: 2
     }).format;
   for (let perf of invoice.performances) {
-    let thisAmount = amountFor(playFor(perf), perf);
+    let thisAmount = amountFor(perf);
 
     // add volume credits
     volumeCredits += Math.max(perf.audience - 30, 0);

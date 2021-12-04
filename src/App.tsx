@@ -32,26 +32,30 @@ type Invoice = {
 const invoices = _invoices as Invoice[]
 const plays = _plays as Plays
 
+function playFor(performance: Performance) {
+  return plays[performance.playID]
+}
+
 /**
  * 计算一场演出的费用
  * @param play 剧目
- * @param perf 包含剧目id和观众数量
+ * @param performance 包含剧目id和观众数量
  */
-function amountFor(play: Play, perf: Performance) {
+function amountFor(play: Play, performance: Performance) {
   let result: number = 0
   switch (play.type) {
     case "tragedy":
       result = 40000;
-      if (perf.audience > 30) {
-        result += 1000 * (perf.audience - 30);
+      if (performance.audience > 30) {
+        result += 1000 * (performance.audience - 30);
       }
       break;
     case "comedy":
       result = 30000;
-      if (perf.audience > 20) {
-        result += 10000 + 500 * (perf.audience - 20);
+      if (performance.audience > 20) {
+        result += 10000 + 500 * (performance.audience - 20);
       }
-      result += 300 * perf.audience;
+      result += 300 * performance.audience;
       break;
     default:
       throw new Error(`unknown type: ${play.type}`);
@@ -69,7 +73,7 @@ function statement(invoice: Invoice, plays: Plays) {
       minimumFractionDigits: 2
     }).format;
   for (let perf of invoice.performances) {
-    const play = plays[perf.playID];
+    const play = playFor(perf);
     let thisAmount = amountFor(play, perf);
 
     // add volume credits
